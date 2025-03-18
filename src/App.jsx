@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 
 export default function App() {
   const [politicians, setPoliticians] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchPoliticians = async () => {
       try {
         const response = await fetch(
@@ -31,6 +31,23 @@ export default function App() {
     );
   });
 
+  const PoliticianCard = memo(({ politician }) => {
+    console.log(`Rendering card for: ${politician.name}`); // Verifica del rendering
+
+    return (
+      <div>
+        <img src={politician.image} alt={politician.name} />
+        <h2>{politician.name}</h2>
+        <p>
+          <strong>Posizione:</strong> {politician.position}
+        </p>
+        <p>
+          <strong>Biografia:</strong> {politician.biography}
+        </p>
+      </div>
+    );
+  });
+
   return (
     <div>
       <h1>Lista dei Politici</h1>
@@ -42,16 +59,7 @@ export default function App() {
       />
       <div>
         {filteredPoliticians.map((politician) => (
-          <div key={politician.id}>
-            <img src={politician.image} alt={politician.name} />
-            <h2>{politician.name}</h2>
-            <p>
-              <strong>Posizione:</strong> {politician.position}
-            </p>
-            <p>
-              <strong>Biografia:</strong> {politician.biography}
-            </p>
-          </div>
+          <PoliticianCard key={politician.id} politician={politician} />
         ))}
       </div>
     </div>
