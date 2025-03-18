@@ -1,5 +1,21 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
+const PoliticianCard = React.memo(({ politician }) => {
+  console.log(`Rendering card for: ${politician.name}`); // This will now only log when the component actually renders
+  return (
+    <div>
+      <img src={politician.image} alt={politician.name} />
+      <h2>{politician.name}</h2>
+      <p>
+        <strong>Posizione:</strong> {politician.position}
+      </p>
+      <p>
+        <strong>Biografia:</strong> {politician.biography}
+      </p>
+    </div>
+  );
+});
+
 export default function App() {
   const [politicians, setPoliticians] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,7 +35,6 @@ export default function App() {
         console.error('Errore durante il fetch dei politici:', error);
       }
     };
-
     fetchPoliticians();
   }, []);
 
@@ -32,23 +47,6 @@ export default function App() {
       );
     });
   }, [politicians, searchTerm]);
-
-  const PoliticianCard = ({ politician }) => {
-    console.log(`Rendering card for: ${politician.name}`);
-
-    return (
-      <div>
-        <img src={politician.image} alt={politician.name} />
-        <h2>{politician.name}</h2>
-        <p>
-          <strong>Posizione:</strong> {politician.position}
-        </p>
-        <p>
-          <strong>Biografia:</strong> {politician.biography}
-        </p>
-      </div>
-    );
-  };
 
   return (
     <div>
