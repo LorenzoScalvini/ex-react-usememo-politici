@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 export default function App() {
   const [politicians, setPoliticians] = useState([]);
@@ -23,16 +23,18 @@ export default function App() {
     fetchPoliticians();
   }, []);
 
-  const filteredPoliticians = politicians.filter((politician) => {
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    return (
-      politician.name.toLowerCase().includes(lowerCaseSearchTerm) ||
-      politician.biography.toLowerCase().includes(lowerCaseSearchTerm)
-    );
-  });
+  const filteredPoliticians = useMemo(() => {
+    return politicians.filter((politician) => {
+      const lowerCaseSearchTerm = searchTerm.toLowerCase();
+      return (
+        politician.name.toLowerCase().includes(lowerCaseSearchTerm) ||
+        politician.biography.toLowerCase().includes(lowerCaseSearchTerm)
+      );
+    });
+  }, [politicians, searchTerm]);
 
-  const PoliticianCard = memo(({ politician }) => {
-    console.log(`Rendering card for: ${politician.name}`); // Verifica del rendering
+  const PoliticianCard = ({ politician }) => {
+    console.log(`Rendering card for: ${politician.name}`);
 
     return (
       <div>
@@ -46,7 +48,7 @@ export default function App() {
         </p>
       </div>
     );
-  });
+  };
 
   return (
     <div>
