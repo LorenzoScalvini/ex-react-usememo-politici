@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
 const PoliticianCard = React.memo(({ politician }) => {
-  console.log(`Rendering card for: ${politician.name}`); // This will now only log when the component actually renders
+  console.log(`Rendering card for: ${politician.name}`); // This will only log when the component actually renders
   return (
     <div>
       <img src={politician.image} alt={politician.name} />
@@ -19,6 +19,7 @@ const PoliticianCard = React.memo(({ politician }) => {
 export default function App() {
   const [politicians, setPoliticians] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedPosition, setSelectedPosition] = useState('');
 
   useEffect(() => {
     const fetchPoliticians = async () => {
@@ -38,25 +39,51 @@ export default function App() {
     fetchPoliticians();
   }, []);
 
+  const uniquePositions = useMemo(() => {
+    const positions = politicians.map((politician) => politician.position);
+    return ['', ...new Set(positions)];
+  }, [politicians]);
+
   const filteredPoliticians = useMemo(() => {
     return politicians.filter((politician) => {
       const lowerCaseSearchTerm = searchTerm.toLowerCase();
-      return (
+      const matchesSearchTerm =
         politician.name.toLowerCase().includes(lowerCaseSearchTerm) ||
-        politician.biography.toLowerCase().includes(lowerCaseSearchTerm)
-      );
+        politician.biography.toLowerCase().includes(lowerCaseSearchTerm);
+
+      const matchesPosition =
+        selectedPosition === '' || politician.position === selectedPosition;
+
+      return matchesSearchTerm && matchesPosition;
     });
-  }, [politicians, searchTerm]);
+  }, [politicians, searchTerm, selectedPosition]);
 
   return (
     <div>
       <h1>Lista dei Politici</h1>
-      <input
-        type="text"
-        placeholder="Cerca per nome o biografia..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
+
+      <div style={{ marginBottom: '20px' }}>
+        <input
+          type="text"
+          placeholder="Cerca per nome o biografia..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ marginRight: '10px' }}
+        />
+
+        <select
+          value={selectedPosition}
+          onChange={(e) => setSelectedPosition(e.target.value)}
+        >
+          <option value="">Tutte le posizioni</option>
+          {uniquePositions.slice(1).map((position) => (
+            <option key={position} value={position}>
+              {position}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div>
         {filteredPoliticians.map((politician) => (
           <PoliticianCard key={politician.id} politician={politician} />
