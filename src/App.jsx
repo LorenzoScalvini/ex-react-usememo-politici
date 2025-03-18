@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
 const PoliticianCard = React.memo(({ politician }) => {
-  console.log(`Rendering card for: ${politician.name}`); // This will only log when the component actually renders
+  console.log(`Rendering card for: ${politician.name}`);
   return (
     <div>
       <img src={politician.image} alt={politician.name} />
